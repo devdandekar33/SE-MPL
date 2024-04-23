@@ -1,3 +1,9 @@
+;Write X86/64 ALP to detect protected mode and display the 
+;values of GDTR, LDTR, IDTR, TR and MSW Registers. Also 
+;identify CPU type using CPUID instruction.
+
+;(for cpuid cpuid instruction is used it stores the data in eax)
+
 section .data
 rm db "Processor is in real mode"
 rm_l equ $-rm
