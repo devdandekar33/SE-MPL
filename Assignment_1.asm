@@ -17,10 +17,10 @@ section .text
 global _start
 	_start:
 	
-	mov rax,1
-	mov rdi,1
-	mov rsi,msg1
-	mov rdx,msg1len
+	mov rax,1			;system call
+	mov rdi,1			;stdout
+	mov rsi,msg1			;likely points to the memory location where the message string to be displayed is stored
+	mov rdx,msg1len			;holds the length of the data to be printed 
 	syscall
 	
 	mov rbp,array;
