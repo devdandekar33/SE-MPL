@@ -76,3 +76,21 @@ positive:inc byte[pcount]
 	call Display
  	
  	exit
+Display: 	mov rbx, rax
+		mov rdi, result			;mov result variable to rdi
+		mov cx, 16			; set cx to 16
+	convert:rol rbx, 04
+		mov al, bl
+		and al, 0fh
+		cmp al, 09h
+		jle add_30
+		add al, 07h
+	add_30: add al, 30h
+		mov [rdi], al		; al value is moved to location pointed by rdi i.e. result
+		inc rdi			; increment rdi
+		dec cx
+		jnz convert
+		
+		display result, 16
+		display nmsg, nmsglen
+		ret
