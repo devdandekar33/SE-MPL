@@ -1,9 +1,3 @@
-;Write X86/64 ALP to detect protected mode and display the 
-;values of GDTR, LDTR, IDTR, TR and MSW Registers. Also 
-;identify CPU type using CPUID instruction.
-
-;(for cpuid cpuid instruction is used it stores the data in eax)
-
 section .data
 rm db "Processor is in real mode"
 rm_l equ $-rm
@@ -17,6 +11,8 @@ t db "Task register contents are"
 t_l equ $-t
 i db "IDT contents are"
 i_l equ $-i
+cpuiddata db"CPU ID is :"
+cpuidlen equ $-cpuiddata
 m db "Machine status word"
 m_l equ $-m
 col db ":"
@@ -45,10 +41,10 @@ global _start
 _start:
 
 smsw eax  				;smsw-store machine status word
-mov[cr0_data],eax
-bt eax,0				;bit test- copies bit from register to carry flag
+mov[cr0_data],eax       ;we store msw data in  cr0
+bt eax,0				;bit test- copies bit from register to carry flag( to check if the processor is in real or protected mode)
 jc prmode				; jump if carry
-disp rm,rm_l				;display real mode text
+disp rm,rm_l			;display real mode text
 jmp next1 				;jump to next1 
 
 prmode:					;protected mode display
@@ -56,23 +52,23 @@ disp pm,pm_l
 disp newline,1
 
 next1 :
-sgdt [gdt]				; stores segment selector from gdt
+sgdt [gdt]				; stores segment selector from gdt, stores content in gdt variable
 sldt [ldt]				;from ldt
 sidt [idt]				;from idt
 str [tr]				; from task register
 disp g,g_l				;display gdt
 
-mov bx,[gdt+4]				;move to next nibble ?
+;***************** gdt display ******************
+mov bx,[gdt+4]				;to get msb of gdt bits
 call disp_num				;call disp_num subroutine
-
 mov bx,[gdt+2]				; move to next 2bits
 call disp_num				; call disp_num subroutine
-
-disp col,1				
+disp col,1				    ;display semi colon
 mov bx,[gdt]				;move bx to [gdt]
 call disp_num				
 disp newline,1				;display a new line
 
+;****************** ldt display ******************
 disp l,l_l				;display ldt contents
 mov bx,[ldt]				;move [ldt] to bx
 call disp_num
@@ -103,22 +99,28 @@ mov bx,[cr0_data]			;
 call disp_num
 disp newline,1
 
+;************** cpu id ********************
+disp cpuiddata,cpuidlen
+mov eax,00h
+cpuid 
+call disp_num 
+
 exit:					; to exit the program
 mov rax,60
 mov rdi,0
 syscall					; system call means ask system to perform various task
 
-disp_num:				;  ?
+disp_num:				; to print number
 mov esi, dnum_buff			
 mov ecx,4				
 
-up1:					    ; ?
-rol bx,4				  ; rotate left by 4 bits
-mov dl,bl				  ; mov contents from bl to dl
+up1:				
+rol bx,4				; rotate left by 4 bits
+mov dl,bl				; mov contents from bl to dl
 and dl,0fh				; and dl with 0016
 add dl,30h				; add 30 to dl
 cmp dl,39h				; compare 30 with 39
-jbe skip1				  ;if below or equal go to skip1
+jbe skip1				;if below or equal go to skip1
 add dl,07h				; add 07 to dl 
 
 skip1:
