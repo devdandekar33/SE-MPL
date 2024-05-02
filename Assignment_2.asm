@@ -9,7 +9,7 @@ section .bss
 	str1 resb 200
 	result resb 200
 	
-	%macro exit 0
+	%macro exit 0			;macro for exit, can also write macro for read and write
 	mov rax,60
 	mov rdi,0
 	syscall
@@ -32,21 +32,21 @@ section .text
 	mov rdx,200
 	syscall
 	
-	mov rbx,rax,
-	mov rdi,result
-	mov cx,16
+	mov rbx,rax,				;saves the return value of syscall i.e. the number of characters read
+	mov rdi,result				;mov result in rdi
+	mov cx,16				;set cx to 16
 	
 up1:
-	rol rbx,04
-	mov al,bl
-	and al,0fh
-	cmp al,09h
+	rol rbx,04				;rotate rbx by 4 bits to left(lsb takes position of msb)
+	mov al,bl				;
+	and al,0fh				;and al with 0f 
+	cmp al,09h				;compare with 9h 
 	jg add_37
-	add al,30h
+	add al,30h				;if al<=9 add 30 to it
 	jmp skip
 	
 	add_37: add al,37h
-	skip: mov[rdi],al
+	skip: mov[rdi],al			;mov al to [rdi] i.e. to result
 	inc rdi,
 	dec cx,
 	jnz up1
