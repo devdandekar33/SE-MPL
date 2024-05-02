@@ -48,46 +48,39 @@ global _start
 	
 	print msg1 , msg1len
 	
-	mov rbp,array;
-	mov byte[counter],5
+	mov rbp,array			;point array using rbp
+	mov byte[counter],5		;set counter to 5
 	
 	loop1: input rbp,17
-	
 	add rbp,17
 	dec byte[counter]
 	jnz loop1
 	
-	
-	print msg2 , msg2len
-	
-	
-	mov rbp,array;
+	print msg2 , msg2len		; print the array
+	mov rbp,array
 	mov byte[counter],5
 	
-	loop2: print rbp,17
-	
+	loop2: print rbp,17		; print rbp 
 	add rbp,17
 	dec byte[counter]
 	jnz loop2
 	
-	
-	mov cx,5
-	mov al,0
-	mov rsi,array
-	back: cmp al,[rsi]
+	mov cx,5			;set cx to 5
+	mov al,0			;set al 0
+	mov rsi,array			;point array using rsi
+	back: cmp al,[rsi]		;compare al with element at rsi
 	ja go
-	
-	mov al,[rsi]
+	mov al,[rsi]			; if al < [rsi] , al=[rsi]
 	go: inc rsi
-	dec cx,
+	dec cx
 	jnz back 
 	
-	mov rbx,rax,
-	mov rdi,result
-	mov cx,16
+	mov rbx,rax			;store ax to bx
+	mov rdi,result			; result is pointed by rdi- destination index
+	mov cx,16			;cx is set to 16
 	
 up1:
-	rol rbx,04
+	rol rbx,04			;rotate rbx by 04 to left
 	mov al,bl
 	and al,0fh
 	cmp al,09h
@@ -96,7 +89,7 @@ up1:
 	jmp skip
 	
 	add_37: add al,37h
-	skip: mov[rdi],al
+	skip: mov[rdi],al	; mov al in result
 	inc rdi,
 	dec cx,
 	jnz up1
